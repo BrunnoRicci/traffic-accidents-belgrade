@@ -93,10 +93,10 @@ plt.xticks(rotation=45);
 df['acc_outcome'].value_counts()
 
 
-# In[16]:
+# In[92]:
 
 
-df[df['acc_outcome'] == 'Sa poginulim']
+df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
 
 
 # ## Accident Types
