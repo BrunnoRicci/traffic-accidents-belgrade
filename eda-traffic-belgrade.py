@@ -167,31 +167,45 @@ ax.set_title('Day Of Week');
 
 # ## GeoLoc 
 
-# In[37]:
+# In[86]:
 
 
+#Constant
 belgrade_loc = {'lat':'44.7866', 'long':'20.4489'}
 
 
-# In[38]:
+# In[87]:
 
+
+plt.figure(figsize=(ph,ph))
 
 plt.scatter(df['long'], df['lat'], s=[5] * len(df), color='#32a89b');
 
 
-# In[39]:
+# In[88]:
 
 
 from gmplot import gmplot
 
+from IPython.core.display import display, HTML
+from IPython.display import IFrame
 
-# In[55]:
+
+# In[89]:
 
 
 #Create Heatmap
-gmap = gmplot.GoogleMapPlotter(belgrade_loc['lat'],belgrade_loc['long'], zoom=1);
+gmap = gmplot.GoogleMapPlotter(belgrade_loc['lat'],belgrade_loc['long'], zoom=10);
 
 heatmap = gmap.heatmap(df['lat'], df['long'])
 
-gmap.draw("accidents_heatmap.html")
+hm_output = "accidents_heatmap.html"
+gmap.draw(hm_output)
+
+
+# In[90]:
+
+
+#Display Map
+IFrame(src=hm_output,width=700, height=600)
 
