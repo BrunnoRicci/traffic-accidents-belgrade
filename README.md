@@ -1,3 +1,3 @@
 # Traffic Accidents Belgrade
 
-This Repositorium contains exploratory data anlisys of traffic accidents in Bilgrade.
+This repo. contains exploratory data anlisys of traffic accidents in Bilgrade for year 2018.
