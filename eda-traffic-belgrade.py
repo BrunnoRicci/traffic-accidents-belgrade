@@ -218,3 +218,24 @@ gmap.draw(hm_output)
 #Display Map
 IFrame(src=hm_output,width=700, height=600)
 
+
+# ## Cycling Accidents
+
+# In[127]:
+
+
+df[df['description'].map(lambda x: 'bicikl' in x )]
+
+
+# In[139]:
+
+
+plt.figure(figsize=(pw, 2*pw))
+df['description'].value_counts()[::-1].plot(kind='barh');
+
+
+# In[ ]:
+
+
+
+
