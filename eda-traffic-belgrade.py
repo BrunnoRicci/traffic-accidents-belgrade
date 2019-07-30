@@ -219,15 +219,15 @@ gmap.draw(hm_output)
 IFrame(src=hm_output,width=700, height=600)
 
 
-# ## Cycling Accidents
+# ## Accident Descriptions
 
-# In[127]:
+# In[140]:
 
 
 df[df['description'].map(lambda x: 'bicikl' in x )]
 
 
-# In[139]:
+# In[141]:
 
 
 plt.figure(figsize=(pw, 2*pw))
