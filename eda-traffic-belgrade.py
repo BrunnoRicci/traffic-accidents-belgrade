@@ -174,12 +174,21 @@ ax.set_title('Day Of Week');
 belgrade_loc = {'lat':'44.7866', 'long':'20.4489'}
 
 
-# In[87]:
+# In[97]:
 
 
 plt.figure(figsize=(ph,ph))
 
 plt.scatter(df['long'], df['lat'], s=[5] * len(df), color='#32a89b');
+
+
+# In[120]:
+
+
+topl = df[(df['long'].between(20.3, 20.6)) & (df['lat'].between(44.6, 44.9))]
+plt.figure(figsize=(ph,ph))
+
+sns.kdeplot(topl['long'], topl['lat'], shade=True, shade_lowest=False, color='#32a89b');
 
 
 # In[88]:
@@ -191,19 +200,19 @@ from IPython.core.display import display, HTML
 from IPython.display import IFrame
 
 
-# In[89]:
+# In[95]:
 
 
 #Create Heatmap
 gmap = gmplot.GoogleMapPlotter(belgrade_loc['lat'],belgrade_loc['long'], zoom=10);
 
-heatmap = gmap.heatmap(df['lat'], df['long'])
+heatmap = gmap.heatmap(df['lat'], df['long'], radius=20)
 
 hm_output = "accidents_heatmap.html"
 gmap.draw(hm_output)
 
 
-# In[90]:
+# In[108]:
 
 
 #Display Map
