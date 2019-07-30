@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[103]:
+# In[8]:
 
 
 # %load ../../misc/utils/import.py
@@ -28,7 +28,7 @@ pd.options.display.max_colwidth = 200
 # warnings.filterwarnings('ignore')
 
 
-# In[150]:
+# In[9]:
 
 
 #Read df
@@ -39,14 +39,14 @@ df = read_ods(file_name, 1, columns=columns)
 print("Number of accidents {}".format(len(df)))
 
 
-# In[151]:
+# In[10]:
 
 
 #Sample
 df.sample(5, random_state=23)
 
 
-# In[152]:
+# In[11]:
 
 
 #To date-time
@@ -55,7 +55,7 @@ df['date'] = pd.to_datetime(df['date'])
 df = df.sort_values('date')
 
 
-# In[153]:
+# In[12]:
 
 
 #Check Duplicates
@@ -64,7 +64,7 @@ dupl_ids = df[df.duplicated(subset=['id'])]['id']
 df.set_index('id').sort_index().loc[dupl_ids].head(4)
 
 
-# In[154]:
+# In[13]:
 
 
 #Drop Duplictates
@@ -75,7 +75,7 @@ print("After duplicates removal {}".format(len(df)))
 
 # ## Accidents Outcomes
 
-# In[160]:
+# In[14]:
 
 
 #Plot
@@ -87,13 +87,13 @@ ax.set_title('Accident Outcomes Distribution')
 plt.xticks(rotation=45);
 
 
-# In[161]:
+# In[15]:
 
 
 df['acc_outcome'].value_counts()
 
 
-# In[162]:
+# In[16]:
 
 
 df[df['acc_outcome'] == 'Sa poginulim']
@@ -101,7 +101,7 @@ df[df['acc_outcome'] == 'Sa poginulim']
 
 # ## Accident Types
 
-# In[163]:
+# In[17]:
 
 
 #Plot
@@ -113,7 +113,7 @@ ax.set_title('Accident Type Distribution')
 plt.xticks(rotation=45);
 
 
-# In[164]:
+# In[18]:
 
 
 #Plot
@@ -128,7 +128,7 @@ plt.xticks(rotation=45);
 
 # ## Seasonality of Accidents
 
-# In[165]:
+# In[19]:
 
 
 #Seasonal df
@@ -139,7 +139,7 @@ ses_df['count'] = 1
 ses_df = ses_df.resample('1m')[['count']].sum()
 
 
-# In[175]:
+# In[20]:
 
 
 #Plot
@@ -148,7 +148,7 @@ ax = ses_df.plot();
 ax.set_title('Number of Accidents Throughout The Year');
 
 
-# In[176]:
+# In[21]:
 
 
 #Weekday
@@ -156,7 +156,7 @@ day_map = {0:'Mon',1:'Tue',2:'Wed',3:'Thu',4:'Fri',5:'Sat',6:'Sun'}
 df['day_of_week'] = df['date'].dt.dayofweek.map(day_map)
 
 
-# In[177]:
+# In[22]:
 
 
 #Plot
@@ -167,8 +167,31 @@ ax.set_title('Day Of Week');
 
 # ## GeoLoc 
 
-# In[ ]:
+# In[37]:
 
 
+belgrade_loc = {'lat':'44.7866', 'long':'20.4489'}
 
+
+# In[38]:
+
+
+plt.scatter(df['long'], df['lat'], s=[5] * len(df), color='#32a89b');
+
+
+# In[39]:
+
+
+from gmplot import gmplot
+
+
+# In[55]:
+
+
+#Create Heatmap
+gmap = gmplot.GoogleMapPlotter(belgrade_loc['lat'],belgrade_loc['long'], zoom=1);
+
+heatmap = gmap.heatmap(df['lat'], df['long'])
+
+gmap.draw("accidents_heatmap.html")
 
