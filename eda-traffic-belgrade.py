@@ -150,7 +150,7 @@ print("Number of accidents after innitial filtering {}".format(len(df)))
 output_dir = 'outputs/'
 
 def output_csv_for_trnas(df, output_dir, col):
-   df[col].value_counts().reset_index()[['index']].to_csv(output_dir + col + '.csv', index=False) 
+   df[col].value_counts().reset_index()[['index']].to_csv(output_dir + col + '.tsv', index=False) 
 
 output_csv_for_trnas(df, output_dir, 'acc_type')
 output_csv_for_trnas(df, output_dir, 'acc_outcome')
