@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[617]:
+# In[52]:
 
 
 # %load ../../misc/utils/import.py
@@ -29,7 +29,7 @@ pd.options.display.max_colwidth = 200
 # warnings.filterwarnings('ignore')
 
 
-# In[618]:
+# In[53]:
 
 
 #colors
@@ -41,7 +41,7 @@ coral = '#eb4c34'
 
 # ## Exploratory Data Anlysis of Traffic Accidents in Belgrade 
 
-# In[619]:
+# In[54]:
 
 
 #Read df
@@ -57,7 +57,7 @@ for fn in file_names[1:]:
 print("Number of accidents {}".format(len(df)))
 
 
-# In[620]:
+# In[55]:
 
 
 #Sample
@@ -65,7 +65,7 @@ print("Sample")
 df.sample(5, random_state=23)
 
 
-# In[621]:
+# In[56]:
 
 
 #Add dummy
@@ -80,7 +80,7 @@ df['long'] = df['long'].astype('float')
 df['lat'] = df['lat'].astype('float')
 
 
-# In[622]:
+# In[57]:
 
 
 #To date-time
@@ -106,7 +106,7 @@ df['hour']  = df['date'].dt.hour
 print("Data from {} to {}".format(df['date'].min().date(), df['date'].max().date()))
 
 
-# In[623]:
+# In[58]:
 
 
 #Check Duplicates
@@ -116,7 +116,7 @@ print('Check duplicates')
 df.set_index('id').sort_index().loc[dupl_ids].head(4)
 
 
-# In[624]:
+# In[59]:
 
 
 #Drop Duplictates
@@ -125,7 +125,7 @@ df = df.drop_duplicates(subset=['id'])
 print("After duplicates removal {}".format(len(df)))
 
 
-# In[625]:
+# In[60]:
 
 
 #Filter incorrect AC types
@@ -143,7 +143,7 @@ print("Number of accidents after innitial filtering {}".format(len(df)))
 
 # ## Accidents Outcomes
 
-# In[626]:
+# In[61]:
 
 
 #Plot
@@ -155,13 +155,13 @@ ax.set_title('Accident Outcomes Distribution')
 plt.xticks(rotation=45);
 
 
-# In[627]:
+# In[62]:
 
 
 df['acc_outcome'].value_counts()
 
 
-# In[628]:
+# In[63]:
 
 
 #df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
@@ -169,7 +169,7 @@ df['acc_outcome'].value_counts()
 
 # ## Accident Types
 
-# In[629]:
+# In[64]:
 
 
 #Plot
@@ -183,7 +183,7 @@ plt.xticks(rotation=45);
 plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 
-# In[630]:
+# In[65]:
 
 
 #Plot
@@ -201,9 +201,18 @@ plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 # **Red Line** marks **pedestrians**. <br/>
 #     Although the accidents with pedestrians are the **least common**, they have the **highest death toll**. 
 
+# ## Accident Descriptions
+
+# In[66]:
+
+
+plt.figure(figsize=(pw, 2*pw))
+df['description'].value_counts()[::-1].plot(kind='barh', color=blue);
+
+
 # ##  Time Series - Trend and Seasonality Obeservation
 
-# In[631]:
+# In[67]:
 
 
 #Seasonal df
@@ -217,7 +226,7 @@ ts_df['trend'] = ts_df[['count']].rolling(12).mean()
 ts_df['residual'] = ts_df['count'] - ts_df['trend']
 
 
-# In[632]:
+# In[68]:
 
 
 #Plot
@@ -231,7 +240,7 @@ ax.set_title('Number of Accidents');
 # - There might be **missing data** for 2015 Nov - 216 Jan
 # - 2019 data looks **odd**
 
-# In[633]:
+# In[69]:
 
 
 #Month
@@ -240,7 +249,7 @@ ax = sns.countplot(df['month'], color=aquam);
 ax.set_title('Month');
 
 
-# In[634]:
+# In[70]:
 
 
 #Month
@@ -250,7 +259,7 @@ ax = sns.countplot(df['day_of_week'], order=order, color=aquam);
 ax.set_title('Week Day');
 
 
-# In[635]:
+# In[71]:
 
 
 #Month
@@ -261,14 +270,14 @@ ax.set_title('Time Of Day');
 
 # ## GeoLoc 
 
-# In[636]:
+# In[72]:
 
 
 #Constant
 belgrade_loc = {'lat':'44.7866', 'long':'20.4489'}
 
 
-# In[637]:
+# In[73]:
 
 
 plt.figure(figsize=(ph, ph))
@@ -277,17 +286,27 @@ plt.scatter(df['long'], df['lat'], s=[5] * len(df), color=blue);
 plt.title("All Accident Types");
 
 
-# In[638]:
+# In[74]:
 
 
-sns.relplot(x="long", y="lat", hue="acc_outcome", #size="acc_outcome",
-            sizes=(40, 400), alpha=.5, palette="autumn_r",
+sns.relplot(x="long", y="lat", hue="acc_outcome", 
+            sizes=(40, 400), alpha=.8, palette="autumn_r",
             height=ph, data=df);
 
-plt.title("All Accident Outcomes");
+plt.title("Accident Outcomes");
 
 
-# In[160]:
+# In[75]:
+
+
+sns.relplot(x="long", y="lat", hue="acc_type",
+            sizes=(5, 5), alpha=.5,
+            height=ph, data=df);
+
+plt.title("Accident Outcomes");
+
+
+# In[76]:
 
 
 from gmplot import gmplot
@@ -296,7 +315,7 @@ from IPython.core.display import display, HTML
 from IPython.display import IFrame
 
 
-# In[161]:
+# In[77]:
 
 
 #Create Heatmap
@@ -304,28 +323,15 @@ gmap = gmplot.GoogleMapPlotter(belgrade_loc['lat'],belgrade_loc['long'], zoom=10
 
 heatmap = gmap.heatmap(df['lat'], df['long'], radius=20)
 
-hm_output = "accidents_heatmap.html"
+hm_output = "outputs/accidents_heatmap.html"
 gmap.draw(hm_output)
 
 
-# In[162]:
+# In[78]:
 
 
 #Display Map
-IFrame(src=hm_output,width=700, height=600)
+IFrame(src=hm_output, width=800, height=800)
 
 
-# ## Accident Descriptions
-
-# In[163]:
-
-
-df[df['description'].map(lambda x: 'bicikl' in x )]
-
-
-# In[164]:
-
-
-plt.figure(figsize=(pw, 2*pw))
-df['description'].value_counts()[::-1].plot(kind='barh');
-
+# **HTML** Available in **outputs** folder
