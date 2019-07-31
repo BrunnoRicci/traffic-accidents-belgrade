@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[48]:
+# In[41]:
 
 
 # %load ../../misc/utils/import.py
@@ -31,7 +31,7 @@ pd.options.display.max_colwidth = 200
 # warnings.filterwarnings('ignore')
 
 
-# In[49]:
+# In[42]:
 
 
 #colors
@@ -43,7 +43,7 @@ coral = '#eb4c34'
 
 # ## Exploratory Data Anlysis of Traffic Accidents in Belgrade 
 
-# In[50]:
+# In[43]:
 
 
 #Read df
@@ -59,7 +59,7 @@ for fn in file_names[1:]:
 print("Number of accidents {}".format(len(df)))
 
 
-# In[51]:
+# In[44]:
 
 
 #Sample
@@ -67,7 +67,7 @@ print("Sample")
 df.sample(5, random_state=23)
 
 
-# In[52]:
+# In[45]:
 
 
 #Add dummy
@@ -82,7 +82,7 @@ df['long'] = df['long'].astype('float')
 df['lat'] = df['lat'].astype('float')
 
 
-# In[53]:
+# In[46]:
 
 
 #To date-time
@@ -108,7 +108,7 @@ df['hour']  = df['date'].dt.hour
 print("Data from {} to {}".format(df['date'].min().date(), df['date'].max().date()))
 
 
-# In[54]:
+# In[47]:
 
 
 #Check Duplicates
@@ -118,7 +118,7 @@ print('Check duplicates')
 df.set_index('id').sort_index().loc[dupl_ids].head(4)
 
 
-# In[55]:
+# In[48]:
 
 
 #Drop Duplictates
@@ -127,7 +127,7 @@ df = df.drop_duplicates(subset=['id'])
 print("After duplicates removal {}".format(len(df)))
 
 
-# In[56]:
+# In[49]:
 
 
 #Filter incorrect AC types
@@ -145,7 +145,7 @@ print("Number of accidents after innitial filtering {}".format(len(df)))
 
 # ## Accidents Outcomes
 
-# In[57]:
+# In[50]:
 
 
 #Plot
@@ -157,13 +157,13 @@ ax.set_title('Accident Outcomes Distribution')
 plt.xticks(rotation=45);
 
 
-# In[58]:
+# In[51]:
 
 
 df['acc_outcome'].value_counts()
 
 
-# In[59]:
+# In[52]:
 
 
 #df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
@@ -171,7 +171,7 @@ df['acc_outcome'].value_counts()
 
 # ## Accident Types
 
-# In[60]:
+# In[53]:
 
 
 #Plot
@@ -185,7 +185,7 @@ plt.xticks(rotation=45);
 plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 
-# In[61]:
+# In[54]:
 
 
 #Plot
@@ -205,7 +205,7 @@ plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 # ## Accident Descriptions
 
-# In[62]:
+# In[55]:
 
 
 plt.figure(figsize=(pw, 2*pw))
@@ -214,7 +214,7 @@ df['description'].value_counts()[::-1].plot(kind='barh', color=blue);
 
 # ##  Time Series - Trend and Seasonality Observations
 
-# In[63]:
+# In[56]:
 
 
 #Seasonal df
@@ -228,7 +228,7 @@ ts_df['trend'] = ts_df[['count']].rolling(12).mean()
 ts_df['residual'] = ts_df['count'] - ts_df['trend']
 
 
-# In[64]:
+# In[57]:
 
 
 #Plot
@@ -242,7 +242,7 @@ ax.set_title('Number of Accidents');
 # - There might be **missing data** for 2015 Nov - 216 Jan
 # - 2019 data looks **odd**
 
-# In[65]:
+# In[58]:
 
 
 #Month
@@ -251,7 +251,7 @@ ax = sns.countplot(df['month'], color=aquam);
 ax.set_title('Month');
 
 
-# In[66]:
+# In[59]:
 
 
 #Month
@@ -261,7 +261,7 @@ ax = sns.countplot(df['day_of_week'], order=order, color=aquam);
 ax.set_title('Week Day');
 
 
-# In[67]:
+# In[60]:
 
 
 #Month
@@ -272,14 +272,14 @@ ax.set_title('Time Of Day');
 
 # ## GeoLoc 
 
-# In[68]:
+# In[61]:
 
 
 #Constant
 belgrade_loc = {'lat':'44.7866', 'long':'20.4489'}
 
 
-# In[69]:
+# In[62]:
 
 
 plt.figure(figsize=(ph, ph))
@@ -288,7 +288,7 @@ plt.scatter(df['long'], df['lat'], s=[5] * len(df), color=blue);
 plt.title("All Accident Types");
 
 
-# In[70]:
+# In[63]:
 
 
 sns.relplot(x="long", y="lat", hue="acc_outcome", alpha=.8, palette="autumn_r", height=ph, data=df);
@@ -296,7 +296,7 @@ sns.relplot(x="long", y="lat", hue="acc_outcome", alpha=.8, palette="autumn_r", 
 plt.title("Accident Outcomes");
 
 
-# In[71]:
+# In[64]:
 
 
 sns.relplot(x="long", y="lat", hue="acc_type", alpha=.5, palette="cool", height=ph, data=df);
@@ -304,7 +304,7 @@ sns.relplot(x="long", y="lat", hue="acc_type", alpha=.5, palette="cool", height=
 plt.title("Accident Types");
 
 
-# In[72]:
+# In[65]:
 
 
 from gmplot import gmplot
@@ -313,7 +313,7 @@ from IPython.core.display import display, HTML
 from IPython.display import IFrame
 
 
-# In[73]:
+# In[66]:
 
 
 #Create Heatmap
@@ -325,7 +325,7 @@ hm_output = "outputs/accidents_heatmap.html"
 gmap.draw(hm_output)
 
 
-# In[74]:
+# In[67]:
 
 
 #Display Map
@@ -339,7 +339,7 @@ gmap.draw(hm_output)
 # - **pre_rec** - 1 year period before reconstruction
 # - **post_rec** - 1 year period after reconstruction
 
-# In[75]:
+# In[68]:
 
 
 #Slavija coordinates
@@ -350,7 +350,7 @@ lat_2, long_2 = 44.802029, 20.467424
 df['is_slavija'] = df['lat'].between(lat_2,lat_1) & df['long'].between(long_1, long_2)
 
 
-# In[76]:
+# In[69]:
 
 
 #Reconstruction Dates
@@ -375,7 +375,7 @@ def get_period(date):
 df['pre_post_rec'] = df['date'].map(get_period)
 
 
-# In[77]:
+# In[70]:
 
 
 #Slavija pre and post reconstruction
@@ -384,7 +384,7 @@ sl_df = df[df['is_slavija'] & (df['pre_post_rec'] != 'other') ]
 pp_df = df[df['pre_post_rec'] != 'other']
 
 
-# In[78]:
+# In[71]:
 
 
 f, ax = plt.subplots(1, 2, figsize=(2*ph, ph))
@@ -400,17 +400,23 @@ sns.countplot(sl_df['pre_post_rec'], ax=ax[1], palette="winter")
 ax[1].set_title("Overall Accidents - Slavija");
 
 
+# In[72]:
+
+
+sl_df['pre_post_rec'].value_counts()
+
+
 # **Notes** 
 # - We can observe increase in the number of accidents on Slavija after reconstruction (right hand side)
 # - General rise in the number of accident in Belgrade contributes only partially (left hand side)
 
-# In[79]:
+# In[73]:
 
 
 sns.catplot(x="pre_post_rec", y='count', col="acc_outcome", data=sl_df, kind="bar", estimator=sum, palette="winter",);
 
 
-# In[80]:
+# In[74]:
 
 
 sns.catplot(x="pre_post_rec", y='count', col="acc_type", data=sl_df, kind="bar", estimator=sum, palette="winter");
@@ -422,7 +428,7 @@ sns.catplot(x="pre_post_rec", y='count', col="acc_type", data=sl_df, kind="bar",
 # 3. **Increased** number of accidents with multiple vehicles 
 # 4. There were **no accidents** on Slavija with deadly outcomes (for these two years)
 
-# In[86]:
+# In[75]:
 
 
 #Create ts dataframe
@@ -440,7 +446,7 @@ topl['post_rec'] = (topl['pre_post_rec'] == 'post_rec').astype(int)
 topl = topl[['pre_rec', 'post_rec']].resample('1m').sum()
 
 
-# In[87]:
+# In[76]:
 
 
 ax = topl.plot( cmap="winter");
@@ -448,7 +454,7 @@ ax = topl.plot( cmap="winter");
 ax.set_title("Pre/Post Reconstruction Distribution of Accidents Throughout the Year");
 
 
-# In[88]:
+# In[77]:
 
 
 topl = sl_df
@@ -460,7 +466,7 @@ plt.title("Accidents on Slavija - Pre/Post Reconstruction");
 
 # ## Parking Lot Obilicev Venac
 
-# In[107]:
+# In[78]:
 
 
 #OV coordinates
@@ -473,7 +479,7 @@ pl_df = df[df['lat'].between(lat_2,lat_1) & df['long'].between(long_1, long_2)]
 print("Number of accidents on Obilicev Venac parking lot {}".format(len(pl_df)))
 
 
-# In[108]:
+# In[79]:
 
 
 topl = pl_df
@@ -483,10 +489,10 @@ sns.relplot(x="long", y="lat", hue="acc_type", alpha=.8, palette="cool", height=
 plt.title("Accidents on Obilicev Venac - Accident Type");
 
 
-# In[109]:
+# In[80]:
 
 
 sns.countplot(pl_df['acc_type'], palette='cool');
 
 
-# Almost all accidents are with **parked cars**
+# Almost all accidents are with **parked cars** or **single car**.
