@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[94]:
+# In[617]:
 
 
 # %load ../../misc/utils/import.py
@@ -29,9 +29,19 @@ pd.options.display.max_colwidth = 200
 # warnings.filterwarnings('ignore')
 
 
+# In[618]:
+
+
+#colors
+aquam = '#46d4d1'
+blue = '#45d4ff'
+peach = '#f57542'
+coral = '#eb4c34'
+
+
 # ## Exploratory Data Anlysis of Traffic Accidents in Belgrade 
 
-# In[107]:
+# In[619]:
 
 
 #Read df
@@ -47,7 +57,7 @@ for fn in file_names[1:]:
 print("Number of accidents {}".format(len(df)))
 
 
-# In[108]:
+# In[620]:
 
 
 #Sample
@@ -55,7 +65,22 @@ print("Sample")
 df.sample(5, random_state=23)
 
 
-# In[109]:
+# In[621]:
+
+
+#Add dummy
+df['count'] = 1
+
+#Correct falty data
+df['long'] = df['long'].astype('str').map(lambda x: x.replace(',','.'))
+df['lat'] = df['lat'].astype('str').map(lambda x: x.replace(',','.'))
+
+#Expolicit type cast
+df['long'] = df['long'].astype('float')
+df['lat'] = df['lat'].astype('float')
+
+
+# In[622]:
 
 
 #To date-time
@@ -69,20 +94,29 @@ start_date = datetime.datetime(2015, 1, 1)
 end_date = datetime.datetime(2019, 2, 28)
 df = df[df['date'].between(start_date, end_date)]
 
+#Month
+df['month']  = df['date'].dt.month_name()
+
+#Weekday
+df['day_of_week'] = df['date'].dt.weekday_name
+
+#Hour
+df['hour']  = df['date'].dt.hour
+
 print("Data from {} to {}".format(df['date'].min().date(), df['date'].max().date()))
 
 
-# In[110]:
+# In[623]:
 
 
 #Check Duplicates
 dupl_ids = df[df.duplicated(subset=['id'])]['id']
 
+print('Check duplicates')
 df.set_index('id').sort_index().loc[dupl_ids].head(4)
-print('Checkin duplicates')
 
 
-# In[111]:
+# In[624]:
 
 
 #Drop Duplictates
@@ -91,7 +125,7 @@ df = df.drop_duplicates(subset=['id'])
 print("After duplicates removal {}".format(len(df)))
 
 
-# In[112]:
+# In[625]:
 
 
 #Filter incorrect AC types
@@ -100,30 +134,34 @@ filter_ac = at_vc[at_vc < 1000].index
 
 df = df[df['acc_type'].map(lambda x: not x in filter_ac)]
 
+#Filter incorrect Lat and Long
+df = df[(df['long'].between(-180,22)) & (df['lat'].between(-90,90))] #22 - 180 faulty data
+
+
 print("Number of accidents after innitial filtering {}".format(len(df)))
 
 
 # ## Accidents Outcomes
 
-# In[113]:
+# In[626]:
 
 
 #Plot
 order = df['acc_outcome'].value_counts().index
 
-ax = sns.countplot(df['acc_outcome'], order=order, color='#f57542');
+ax = sns.countplot(df['acc_outcome'], order=order, color=blue);
 
 ax.set_title('Accident Outcomes Distribution')
 plt.xticks(rotation=45);
 
 
-# In[114]:
+# In[627]:
 
 
 df['acc_outcome'].value_counts()
 
 
-# In[115]:
+# In[628]:
 
 
 #df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
@@ -131,98 +169,122 @@ df['acc_outcome'].value_counts()
 
 # ## Accident Types
 
-# In[142]:
+# In[629]:
 
 
 #Plot
 order = df['acc_type'].value_counts().index
 
-ax = sns.countplot(df['acc_type'], order=order, color='#32a89b');
+ax = sns.countplot(df['acc_type'], order=order, color=blue);
 
-ax.set_title('Accident Type Distribution')
+ax.set_title('Accident Type Distribution - All')
 plt.xticks(rotation=45);
 
-ax.ax(5)
+plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 
-# In[141]:
+# In[630]:
 
 
 #Plot
 topl = df[df['acc_outcome'] == 'Sa poginulim']
 order = df['acc_type'].value_counts().index
 
-ax = sns.countplot(topl['acc_type'], order=order, color='#eb4c34');
+ax = sns.countplot(topl['acc_type'], order=order, color=peach);
 
 ax.set_title('Accident Type Distribution - Accidents with Death')
 plt.xticks(rotation=45);
 
+plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
-# Although the accidents with pedestrians are the least common, they have the highest death toll.
 
-# ##  Trend and Seasonality Obeservation
+# **Red Line** marks **pedestrians**. <br/>
+#     Although the accidents with pedestrians are the **least common**, they have the **highest death toll**. 
 
-# In[57]:
+# ##  Time Series - Trend and Seasonality Obeservation
+
+# In[631]:
 
 
 #Seasonal df
-ses_df = df.set_index('date')
-ses_df['count'] = 1
+ts_df = df.set_index('date')
 
 #Resample
-ses_df = ses_df.resample('10d')[['count']].sum()
+ts_df = ts_df.resample('1m')[['count']].sum()
+
+#Trend and Season
+ts_df['trend'] = ts_df[['count']].rolling(12).mean()
+ts_df['residual'] = ts_df['count'] - ts_df['trend']
 
 
-# In[58]:
-
-
-#Plot
-ax = ses_df.plot();
-
-ax.set_title('Number of Accidents Throughout The Year');
-
-
-# In[155]:
-
-
-#Weekday
-day_map = {0:'Mon',1:'Tue',2:'Wed',3:'Thu',4:'Fri',5:'Sat',6:'Sun'}
-df['day_of_week'] = df['date'].dt.dayofweek.map(day_map)
-
-
-# In[156]:
+# In[632]:
 
 
 #Plot
-ax = sns.countplot(df['day_of_week'], color='#46d4d1');
+ax = ts_df.plot();
 
-ax.set_title('Day Of Week');
+ax.set_title('Number of Accidents');
+
+
+# **Notes**
+# - We can observe that the number of accidents is **slightly rising** each year
+# - There might be **missing data** for 2015 Nov - 216 Jan
+# - 2019 data looks **odd**
+
+# In[633]:
+
+
+#Month
+ax = sns.countplot(df['month'], color=aquam);
+
+ax.set_title('Month');
+
+
+# In[634]:
+
+
+#Month
+order = ['Monday', 'Tuesday', 'Wednesday','Thursday', 'Friday', 'Saturday', 'Sunday']
+ax = sns.countplot(df['day_of_week'], order=order, color=aquam);
+
+ax.set_title('Week Day');
+
+
+# In[635]:
+
+
+#Month
+ax = sns.countplot(df['hour'], color=aquam);
+
+ax.set_title('Time Of Day');
 
 
 # ## GeoLoc 
 
-# In[157]:
+# In[636]:
 
 
 #Constant
 belgrade_loc = {'lat':'44.7866', 'long':'20.4489'}
 
 
-# In[158]:
+# In[637]:
 
 
-plt.figure(figsize=(ph,ph))
+plt.figure(figsize=(ph, ph))
 
-plt.scatter(df['long'], df['lat'], s=[5] * len(df), color='#32a89b');
-
-
-# In[159]:
+plt.scatter(df['long'], df['lat'], s=[5] * len(df), color=blue);
+plt.title("All Accident Types");
 
 
-topl = df[(df['long'].between(20.3, 20.6)) & (df['lat'].between(44.6, 44.9))]
-plt.figure(figsize=(ph,ph))
+# In[638]:
 
-sns.kdeplot(topl['long'], topl['lat'], shade=True, shade_lowest=False, color='#32a89b');
+
+sns.relplot(x="long", y="lat", hue="acc_outcome", #size="acc_outcome",
+            sizes=(40, 400), alpha=.5, palette="autumn_r",
+            height=ph, data=df);
+
+plt.title("All Accident Outcomes");
 
 
 # In[160]:
