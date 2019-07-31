@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[7]:
+# In[94]:
 
 
 # %load ../../misc/utils/import.py
@@ -29,7 +29,7 @@ pd.options.display.max_colwidth = 200
 # warnings.filterwarnings('ignore')
 
 
-# In[20]:
+# In[95]:
 
 
 #Read df
@@ -45,7 +45,7 @@ for fn in file_names[1:]:
 print("Number of accidents {}".format(len(df)))
 
 
-# In[21]:
+# In[96]:
 
 
 #Sample
@@ -53,7 +53,7 @@ print("Sample")
 df.sample(5, random_state=23)
 
 
-# In[22]:
+# In[97]:
 
 
 #To date-time
@@ -63,20 +63,24 @@ df['date'] = pd.to_datetime(df['date'])
 df = df.sort_values('date')
 
 #Clip end
+start_date = datetime.datetime(2015, 1, 1)
 end_date = datetime.datetime(2019, 2, 28)
-df = df[df['date'] < end_date]
+df = df[df['date'].between(start_date, end_date)]
+
+print("Data from {} to {}".format(df['date'].min().date(), df['date'].max().date()))
 
 
-# In[146]:
+# In[98]:
 
 
 #Check Duplicates
 dupl_ids = df[df.duplicated(subset=['id'])]['id']
 
 df.set_index('id').sort_index().loc[dupl_ids].head(4)
+print('Checkin duplicates')
 
 
-# In[147]:
+# In[99]:
 
 
 #Drop Duplictates
@@ -85,9 +89,21 @@ df = df.drop_duplicates(subset=['id'])
 print("After duplicates removal {}".format(len(df)))
 
 
+# In[100]:
+
+
+#Filter incorrect AC types
+at_vc = df['acc_type'].value_counts()
+filter_ac = at_vc[at_vc < 1000].index 
+
+df = df[df['acc_type'].map(lambda x: not x in filter_ac)]
+
+print("Number of accidents after innitial filtering {}".format(len(df)))
+
+
 # ## Accidents Outcomes
 
-# In[148]:
+# In[101]:
 
 
 #Plot
@@ -99,21 +115,21 @@ ax.set_title('Accident Outcomes Distribution')
 plt.xticks(rotation=45);
 
 
-# In[149]:
+# In[102]:
 
 
 df['acc_outcome'].value_counts()
 
 
-# In[150]:
+# In[103]:
 
 
-df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
+#df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
 
 
 # ## Accident Types
 
-# In[151]:
+# In[104]:
 
 
 #Plot
@@ -125,7 +141,13 @@ ax.set_title('Accident Type Distribution')
 plt.xticks(rotation=45);
 
 
-# In[152]:
+# In[105]:
+
+
+#df.pivot_table(index=id, columns=)
+
+
+# In[106]:
 
 
 #Plot
@@ -138,9 +160,9 @@ ax.set_title('Accident Type Distribution - Accidents with Casualties')
 plt.xticks(rotation=45);
 
 
-# ## Seasonality of Accidents
+# ##  Trend and Seasonality Obeservation
 
-# In[153]:
+# In[57]:
 
 
 #Seasonal df
@@ -148,10 +170,10 @@ ses_df = df.set_index('date')
 ses_df['count'] = 1
 
 #Resample
-ses_df = ses_df.resample('1m')[['count']].sum()
+ses_df = ses_df.resample('10d')[['count']].sum()
 
 
-# In[154]:
+# In[58]:
 
 
 #Plot
