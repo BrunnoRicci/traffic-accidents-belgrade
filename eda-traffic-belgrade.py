@@ -464,6 +464,16 @@ sns.relplot(x="long", y="lat", hue="pre_post_rec", alpha=.8, palette="winter", h
 plt.title("Accidents on Slavija - Pre/Post Reconstruction");
 
 
+# In[85]:
+
+
+topl = sl_df[sl_df['acc_type'] == 'SN SA PEŠACIMA']
+
+sns.relplot(x="long", y="lat", hue="pre_post_rec", alpha=.8, palette="winter", height=ph, data=topl);
+
+plt.title("Accidents with Pedestrians on Slavija - Pre/Post Reconstruction");
+
+
 # ## Parking Lot Obilicev Venac
 
 # In[78]:
