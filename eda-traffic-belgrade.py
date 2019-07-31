@@ -410,7 +410,7 @@ sns.catplot(x="pre_post_rec", y='count', col="acc_outcome", data=sl_df, kind="ba
 # In[264]:
 
 
-sns.catplot(x="pre_post_rec", y='count', col="acc_type", data=sl_df, kind="bar", estimator=sum, palette="winter",);
+sns.catplot(x="pre_post_rec", y='count', col="acc_type", data=sl_df, kind="bar", estimator=sum, palette="winter");
 
 
 # **Notes**
@@ -419,7 +419,33 @@ sns.catplot(x="pre_post_rec", y='count', col="acc_type", data=sl_df, kind="bar",
 # 3. **Increased** number of accidents with multiple vehicles 
 # 4. There were **no accidents** on Slavija with deadly outcomes (for these two years)
 
-# In[265]:
+# In[330]:
+
+
+#Create ts dataframe
+topl = sl_df.copy()
+
+#Shift Year
+topl['date_shf'] = topl['date'].map(lambda x : x.replace(year=2019))
+
+topl = topl.set_index('date_shf')
+
+#Pre/Post
+topl['pre_rec'] = (topl['pre_post_rec'] == 'pre_rec').astype(int)
+topl['post_rec'] = (topl['pre_post_rec'] == 'post_rec').astype(int)
+
+topl = topl[['pre_rec', 'post_rec']].resample('1m').sum()
+
+
+# In[332]:
+
+
+ax = topl.plot( cmap="winter");
+
+ax.set_title("Pre/Post Reconstruction Distribution of Accidents throughout a Year");
+
+
+# In[328]:
 
 
 topl = sl_df
@@ -427,4 +453,10 @@ topl = sl_df
 sns.relplot(x="long", y="lat", hue="pre_post_rec", alpha=.8, palette="winter", height=ph, data=topl);
 
 plt.title("Accidents on Slavija - Pre/Post Reconstruction");
+
+
+# In[ ]:
+
+
+
 
