@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[94]:
+# In[1]:
 
 
 # %load ../../misc/utils/import.py
@@ -33,7 +33,7 @@ pd.options.display.max_colwidth = 200
 # warnings.filterwarnings('ignore')
 
 
-# In[95]:
+# In[2]:
 
 
 #colors
@@ -46,7 +46,7 @@ yellow = '#eef07d'
 
 # ## Exploratory Data Anlysis of Traffic Accidents in Belgrade 
 
-# In[96]:
+# In[3]:
 
 
 #Read df
@@ -62,7 +62,7 @@ for fn in file_names[1:]:
 print("Number of accidents {}".format(len(df)))
 
 
-# In[97]:
+# In[4]:
 
 
 #Sample
@@ -70,7 +70,7 @@ print("Sample")
 df.sample(5, random_state=23)
 
 
-# In[98]:
+# In[5]:
 
 
 #Add dummy
@@ -85,7 +85,7 @@ df['long'] = df['long'].astype('float')
 df['lat'] = df['lat'].astype('float')
 
 
-# In[99]:
+# In[6]:
 
 
 #To date-time
@@ -111,7 +111,7 @@ df['hour']  = df['date'].dt.hour
 print("Data from {} to {}".format(df['date'].min().date(), df['date'].max().date()))
 
 
-# In[100]:
+# In[7]:
 
 
 #Check Duplicates
@@ -121,7 +121,7 @@ print('Check duplicates')
 df.set_index('id').sort_index().loc[dupl_ids].head(4)
 
 
-# In[101]:
+# In[8]:
 
 
 #Drop Duplictates
@@ -130,7 +130,7 @@ df = df.drop_duplicates(subset=['id'])
 print("After duplicates removal {}".format(len(df)))
 
 
-# In[102]:
+# In[9]:
 
 
 #Filter incorrect AC types
@@ -146,7 +146,7 @@ df = df[(df['long'].between(-180,22)) & (df['lat'].between(-90,90))] #22 - 180 f
 print("Number of accidents after innitial filtering {}".format(len(df)))
 
 
-# In[103]:
+# In[10]:
 
 
 #Output
@@ -162,7 +162,7 @@ output_csv_for_trnas(df, output_dir, 'description')
 
 # ## Accidents Outcomes
 
-# In[104]:
+# In[11]:
 
 
 #Plot
@@ -174,13 +174,13 @@ ax.set_title('Accident Outcomes Distribution')
 plt.xticks(rotation=45);
 
 
-# In[105]:
+# In[12]:
 
 
 df['acc_outcome'].value_counts()
 
 
-# In[106]:
+# In[13]:
 
 
 #df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
@@ -188,7 +188,7 @@ df['acc_outcome'].value_counts()
 
 # ## Accident Types
 
-# In[107]:
+# In[14]:
 
 
 #Plot
@@ -202,7 +202,7 @@ plt.xticks(rotation=45);
 plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 
-# In[108]:
+# In[15]:
 
 
 #Plot
@@ -217,7 +217,7 @@ plt.xticks(rotation=45);
 plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 
-# In[109]:
+# In[16]:
 
 
 #Plot
@@ -237,7 +237,7 @@ plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 # ## Accident Descriptions
 
-# In[110]:
+# In[17]:
 
 
 plt.figure(figsize=(pw, 2*pw))
@@ -246,7 +246,7 @@ df['description'].value_counts()[::-1].plot(kind='barh', color=blue);
 
 # ##  Time Series - Trend and Seasonality Observations
 
-# In[111]:
+# In[18]:
 
 
 #Seasonal df
@@ -260,7 +260,7 @@ ts_df['trend'] = ts_df[['count']].rolling(12).mean()
 ts_df['residual'] = ts_df['count'] - ts_df['trend']
 
 
-# In[112]:
+# In[19]:
 
 
 #Plot
@@ -275,7 +275,7 @@ ax.set_title('Number of Accidents');
 # - 2019 data looks **odd**
 # - There is still seasonality left in residual (monthly seson.)
 
-# In[113]:
+# In[20]:
 
 
 #Month
@@ -284,7 +284,7 @@ ax = sns.countplot(df['month'], color=aquam);
 ax.set_title('Month');
 
 
-# In[114]:
+# In[21]:
 
 
 #Month
@@ -294,7 +294,7 @@ ax = sns.countplot(df['day_of_week'], order=order, color=aquam);
 ax.set_title('Week Day');
 
 
-# In[115]:
+# In[22]:
 
 
 #Month
@@ -303,7 +303,7 @@ ax = sns.countplot(df['hour'], color=aquam);
 ax.set_title('Time Of Day');
 
 
-# In[138]:
+# In[23]:
 
 
 #critical dates?
@@ -311,14 +311,14 @@ ax.set_title('Time Of Day');
 
 # ## GeoLoc 
 
-# In[116]:
+# In[24]:
 
 
 #Constant
 belgrade_loc = {'lat':'44.7866', 'long':'20.4489'}
 
 
-# In[117]:
+# In[25]:
 
 
 plt.figure(figsize=(ph, ph))
@@ -327,7 +327,7 @@ plt.scatter(df['long'], df['lat'], s=[5] * len(df), color=blue);
 plt.title("All Accident Types");
 
 
-# In[118]:
+# In[26]:
 
 
 sns.relplot(x="long", y="lat", hue="acc_outcome", alpha=.8, palette="autumn_r", height=ph, data=df);
@@ -335,7 +335,7 @@ sns.relplot(x="long", y="lat", hue="acc_outcome", alpha=.8, palette="autumn_r", 
 plt.title("Accident Outcomes");
 
 
-# In[119]:
+# In[27]:
 
 
 sns.relplot(x="long", y="lat", hue="acc_type", alpha=.5, palette="cool", height=ph, data=df);
@@ -343,7 +343,7 @@ sns.relplot(x="long", y="lat", hue="acc_type", alpha=.5, palette="cool", height=
 plt.title("Accident Types");
 
 
-# In[120]:
+# In[28]:
 
 
 from gmplot import gmplot
@@ -352,7 +352,7 @@ from IPython.core.display import display, HTML
 from IPython.display import IFrame
 
 
-# In[121]:
+# In[29]:
 
 
 #Create Heatmap
@@ -364,7 +364,7 @@ hm_output = output_dir + "accidents_heatmap.html"
 gmap.draw(hm_output)
 
 
-# In[122]:
+# In[30]:
 
 
 #Display Map
@@ -378,7 +378,7 @@ gmap.draw(hm_output)
 # - **pre_rec** - 1 year period before reconstruction
 # - **post_rec** - 1 year period after reconstruction
 
-# In[123]:
+# In[31]:
 
 
 #Slavija coordinates
@@ -389,7 +389,7 @@ lat_2, long_2 = 44.802029, 20.467424
 df['is_slavija'] = df['lat'].between(lat_2,lat_1) & df['long'].between(long_1, long_2)
 
 
-# In[124]:
+# In[32]:
 
 
 #Reconstruction Dates
@@ -414,7 +414,7 @@ def get_period(date):
 df['pre_post_rec'] = df['date'].map(get_period)
 
 
-# In[125]:
+# In[33]:
 
 
 #Slavija pre and post reconstruction
@@ -423,7 +423,7 @@ sl_df = df[df['is_slavija'] & (df['pre_post_rec'] != 'other') ]
 pp_df = df[df['pre_post_rec'] != 'other']
 
 
-# In[126]:
+# In[34]:
 
 
 f, ax = plt.subplots(1, 2, figsize=(2*ph, ph))
@@ -439,14 +439,18 @@ sns.countplot(sl_df['pre_post_rec'], ax=ax[1], palette="winter")
 ax[1].set_title("Overall Accidents - Slavija");
 
 
-# In[127]:
+# In[40]:
 
 
-post_c = sl_df['pre_post_rec'].value_counts()[0]
-pre_c = sl_df['pre_post_rec'].value_counts()[1]
+post_c = sl_df['pre_post_rec'].value_counts()['post_rec']
+pre_c = sl_df['pre_post_rec'].value_counts()['pre_rec']
 x  = pre_c 
 n = post_c + pre_c
-res = binom_test(x, n, alternative='less')
+
+post_d = pp_df['pre_post_rec'].value_counts()['post_rec']
+pre_d = pp_df['pre_post_rec'].value_counts()['pre_rec']
+p = pre_d / (post_d + pre_d)
+res = binom_test(x, n, p,  alternative='less')
 print ('C-Test for increase in number of accidents {:.2f} p-val'.format(res))
 
 
