@@ -29,7 +29,9 @@ pd.options.display.max_colwidth = 200
 # warnings.filterwarnings('ignore')
 
 
-# In[95]:
+# ## Exploratory Data Anlysis of Traffic Accidents in Belgrade 
+
+# In[107]:
 
 
 #Read df
@@ -45,7 +47,7 @@ for fn in file_names[1:]:
 print("Number of accidents {}".format(len(df)))
 
 
-# In[96]:
+# In[108]:
 
 
 #Sample
@@ -53,7 +55,7 @@ print("Sample")
 df.sample(5, random_state=23)
 
 
-# In[97]:
+# In[109]:
 
 
 #To date-time
@@ -70,7 +72,7 @@ df = df[df['date'].between(start_date, end_date)]
 print("Data from {} to {}".format(df['date'].min().date(), df['date'].max().date()))
 
 
-# In[98]:
+# In[110]:
 
 
 #Check Duplicates
@@ -80,7 +82,7 @@ df.set_index('id').sort_index().loc[dupl_ids].head(4)
 print('Checkin duplicates')
 
 
-# In[99]:
+# In[111]:
 
 
 #Drop Duplictates
@@ -89,7 +91,7 @@ df = df.drop_duplicates(subset=['id'])
 print("After duplicates removal {}".format(len(df)))
 
 
-# In[100]:
+# In[112]:
 
 
 #Filter incorrect AC types
@@ -103,7 +105,7 @@ print("Number of accidents after innitial filtering {}".format(len(df)))
 
 # ## Accidents Outcomes
 
-# In[101]:
+# In[113]:
 
 
 #Plot
@@ -115,13 +117,13 @@ ax.set_title('Accident Outcomes Distribution')
 plt.xticks(rotation=45);
 
 
-# In[102]:
+# In[114]:
 
 
 df['acc_outcome'].value_counts()
 
 
-# In[103]:
+# In[115]:
 
 
 #df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
@@ -129,7 +131,7 @@ df['acc_outcome'].value_counts()
 
 # ## Accident Types
 
-# In[104]:
+# In[142]:
 
 
 #Plot
@@ -140,14 +142,10 @@ ax = sns.countplot(df['acc_type'], order=order, color='#32a89b');
 ax.set_title('Accident Type Distribution')
 plt.xticks(rotation=45);
 
-
-# In[105]:
-
-
-#df.pivot_table(index=id, columns=)
+ax.ax(5)
 
 
-# In[106]:
+# In[141]:
 
 
 #Plot
@@ -156,9 +154,11 @@ order = df['acc_type'].value_counts().index
 
 ax = sns.countplot(topl['acc_type'], order=order, color='#eb4c34');
 
-ax.set_title('Accident Type Distribution - Accidents with Casualties')
+ax.set_title('Accident Type Distribution - Accidents with Death')
 plt.xticks(rotation=45);
 
+
+# Although the accidents with pedestrians are the least common, they have the highest death toll.
 
 # ##  Trend and Seasonality Obeservation
 
