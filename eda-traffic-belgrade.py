@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[52]:
+# In[80]:
 
 
 # %load ../../misc/utils/import.py
@@ -20,6 +20,8 @@ pw = 16
 ph = 9
 matplotlib.rcParams['figure.figsize'] = (pw, ph)
 
+sns.set_style("whitegrid")
+
 #Pandas Dsiplay
 pd.options.display.max_rows = 100
 pd.options.display.max_columns = 200
@@ -29,7 +31,7 @@ pd.options.display.max_colwidth = 200
 # warnings.filterwarnings('ignore')
 
 
-# In[53]:
+# In[81]:
 
 
 #colors
@@ -41,7 +43,7 @@ coral = '#eb4c34'
 
 # ## Exploratory Data Anlysis of Traffic Accidents in Belgrade 
 
-# In[54]:
+# In[82]:
 
 
 #Read df
@@ -57,7 +59,7 @@ for fn in file_names[1:]:
 print("Number of accidents {}".format(len(df)))
 
 
-# In[55]:
+# In[83]:
 
 
 #Sample
@@ -65,7 +67,7 @@ print("Sample")
 df.sample(5, random_state=23)
 
 
-# In[56]:
+# In[84]:
 
 
 #Add dummy
@@ -80,7 +82,7 @@ df['long'] = df['long'].astype('float')
 df['lat'] = df['lat'].astype('float')
 
 
-# In[57]:
+# In[85]:
 
 
 #To date-time
@@ -106,7 +108,7 @@ df['hour']  = df['date'].dt.hour
 print("Data from {} to {}".format(df['date'].min().date(), df['date'].max().date()))
 
 
-# In[58]:
+# In[86]:
 
 
 #Check Duplicates
@@ -116,7 +118,7 @@ print('Check duplicates')
 df.set_index('id').sort_index().loc[dupl_ids].head(4)
 
 
-# In[59]:
+# In[87]:
 
 
 #Drop Duplictates
@@ -125,7 +127,7 @@ df = df.drop_duplicates(subset=['id'])
 print("After duplicates removal {}".format(len(df)))
 
 
-# In[60]:
+# In[88]:
 
 
 #Filter incorrect AC types
@@ -143,7 +145,7 @@ print("Number of accidents after innitial filtering {}".format(len(df)))
 
 # ## Accidents Outcomes
 
-# In[61]:
+# In[89]:
 
 
 #Plot
@@ -155,13 +157,13 @@ ax.set_title('Accident Outcomes Distribution')
 plt.xticks(rotation=45);
 
 
-# In[62]:
+# In[90]:
 
 
 df['acc_outcome'].value_counts()
 
 
-# In[63]:
+# In[91]:
 
 
 #df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
@@ -169,7 +171,7 @@ df['acc_outcome'].value_counts()
 
 # ## Accident Types
 
-# In[64]:
+# In[92]:
 
 
 #Plot
@@ -183,7 +185,7 @@ plt.xticks(rotation=45);
 plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 
-# In[65]:
+# In[93]:
 
 
 #Plot
@@ -203,16 +205,16 @@ plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 # ## Accident Descriptions
 
-# In[66]:
+# In[94]:
 
 
 plt.figure(figsize=(pw, 2*pw))
 df['description'].value_counts()[::-1].plot(kind='barh', color=blue);
 
 
-# ##  Time Series - Trend and Seasonality Obeservation
+# ##  Time Series - Trend and Seasonality Observations
 
-# In[67]:
+# In[100]:
 
 
 #Seasonal df
@@ -226,7 +228,7 @@ ts_df['trend'] = ts_df[['count']].rolling(12).mean()
 ts_df['residual'] = ts_df['count'] - ts_df['trend']
 
 
-# In[68]:
+# In[101]:
 
 
 #Plot
@@ -240,7 +242,7 @@ ax.set_title('Number of Accidents');
 # - There might be **missing data** for 2015 Nov - 216 Jan
 # - 2019 data looks **odd**
 
-# In[69]:
+# In[102]:
 
 
 #Month
@@ -249,7 +251,7 @@ ax = sns.countplot(df['month'], color=aquam);
 ax.set_title('Month');
 
 
-# In[70]:
+# In[103]:
 
 
 #Month
@@ -259,7 +261,7 @@ ax = sns.countplot(df['day_of_week'], order=order, color=aquam);
 ax.set_title('Week Day');
 
 
-# In[71]:
+# In[104]:
 
 
 #Month
@@ -270,14 +272,14 @@ ax.set_title('Time Of Day');
 
 # ## GeoLoc 
 
-# In[72]:
+# In[105]:
 
 
 #Constant
 belgrade_loc = {'lat':'44.7866', 'long':'20.4489'}
 
 
-# In[73]:
+# In[106]:
 
 
 plt.figure(figsize=(ph, ph))
@@ -286,7 +288,7 @@ plt.scatter(df['long'], df['lat'], s=[5] * len(df), color=blue);
 plt.title("All Accident Types");
 
 
-# In[74]:
+# In[107]:
 
 
 sns.relplot(x="long", y="lat", hue="acc_outcome", 
@@ -296,14 +298,14 @@ sns.relplot(x="long", y="lat", hue="acc_outcome",
 plt.title("Accident Outcomes");
 
 
-# In[75]:
+# In[108]:
 
 
 sns.relplot(x="long", y="lat", hue="acc_type",
             sizes=(5, 5), alpha=.5,
             height=ph, data=df);
 
-plt.title("Accident Outcomes");
+plt.title("Accident Types");
 
 
 # In[76]:
