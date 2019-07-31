@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[8]:
+# In[7]:
 
 
 # %load ../../misc/utils/import.py
@@ -13,6 +13,7 @@ import seaborn as sns
 import datetime
 
 from pandas_ods_reader import read_ods
+import os
 
 #Display Settings
 pw = 16
@@ -28,34 +29,45 @@ pd.options.display.max_colwidth = 200
 # warnings.filterwarnings('ignore')
 
 
-# In[9]:
+# In[20]:
 
 
 #Read df
-file_name = 'NEZ_OPENDATA_2018_20190125.ods' # year 2018
+input_dir = 'inputs'
 
+file_names =[input_dir + '/' +  x for x in np.array(os.listdir(input_dir))]
+#Columns are missing
 columns = ['id', 'date', 'long', 'lat', 'acc_outcome' ,'acc_type', 'description']
-df = read_ods(file_name, 1, columns=columns)
+
+df = read_ods(file_names[0], 1, columns=columns)
+for fn in file_names[1:]:
+    df = pd.concat([df, read_ods(fn, 1, columns=columns)])
 print("Number of accidents {}".format(len(df)))
 
 
-# In[10]:
+# In[21]:
 
 
 #Sample
+print("Sample")
 df.sample(5, random_state=23)
 
 
-# In[11]:
+# In[22]:
 
 
 #To date-time
 df['date'] = pd.to_datetime(df['date'])
 
+#Sort by date
 df = df.sort_values('date')
 
+#Clip end
+end_date = datetime.datetime(2019, 2, 28)
+df = df[df['date'] < end_date]
 
-# In[12]:
+
+# In[146]:
 
 
 #Check Duplicates
@@ -64,7 +76,7 @@ dupl_ids = df[df.duplicated(subset=['id'])]['id']
 df.set_index('id').sort_index().loc[dupl_ids].head(4)
 
 
-# In[13]:
+# In[147]:
 
 
 #Drop Duplictates
@@ -75,7 +87,7 @@ print("After duplicates removal {}".format(len(df)))
 
 # ## Accidents Outcomes
 
-# In[14]:
+# In[148]:
 
 
 #Plot
@@ -87,13 +99,13 @@ ax.set_title('Accident Outcomes Distribution')
 plt.xticks(rotation=45);
 
 
-# In[15]:
+# In[149]:
 
 
 df['acc_outcome'].value_counts()
 
 
-# In[92]:
+# In[150]:
 
 
 df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
@@ -101,7 +113,7 @@ df[df['acc_outcome'] == 'Sa poginulim'].sample(5, random_state=23)
 
 # ## Accident Types
 
-# In[17]:
+# In[151]:
 
 
 #Plot
@@ -113,7 +125,7 @@ ax.set_title('Accident Type Distribution')
 plt.xticks(rotation=45);
 
 
-# In[18]:
+# In[152]:
 
 
 #Plot
@@ -128,7 +140,7 @@ plt.xticks(rotation=45);
 
 # ## Seasonality of Accidents
 
-# In[19]:
+# In[153]:
 
 
 #Seasonal df
@@ -139,7 +151,7 @@ ses_df['count'] = 1
 ses_df = ses_df.resample('1m')[['count']].sum()
 
 
-# In[20]:
+# In[154]:
 
 
 #Plot
@@ -148,7 +160,7 @@ ax = ses_df.plot();
 ax.set_title('Number of Accidents Throughout The Year');
 
 
-# In[21]:
+# In[155]:
 
 
 #Weekday
@@ -156,7 +168,7 @@ day_map = {0:'Mon',1:'Tue',2:'Wed',3:'Thu',4:'Fri',5:'Sat',6:'Sun'}
 df['day_of_week'] = df['date'].dt.dayofweek.map(day_map)
 
 
-# In[22]:
+# In[156]:
 
 
 #Plot
@@ -167,14 +179,14 @@ ax.set_title('Day Of Week');
 
 # ## GeoLoc 
 
-# In[86]:
+# In[157]:
 
 
 #Constant
 belgrade_loc = {'lat':'44.7866', 'long':'20.4489'}
 
 
-# In[97]:
+# In[158]:
 
 
 plt.figure(figsize=(ph,ph))
@@ -182,7 +194,7 @@ plt.figure(figsize=(ph,ph))
 plt.scatter(df['long'], df['lat'], s=[5] * len(df), color='#32a89b');
 
 
-# In[120]:
+# In[159]:
 
 
 topl = df[(df['long'].between(20.3, 20.6)) & (df['lat'].between(44.6, 44.9))]
@@ -191,7 +203,7 @@ plt.figure(figsize=(ph,ph))
 sns.kdeplot(topl['long'], topl['lat'], shade=True, shade_lowest=False, color='#32a89b');
 
 
-# In[88]:
+# In[160]:
 
 
 from gmplot import gmplot
@@ -200,7 +212,7 @@ from IPython.core.display import display, HTML
 from IPython.display import IFrame
 
 
-# In[95]:
+# In[161]:
 
 
 #Create Heatmap
@@ -212,7 +224,7 @@ hm_output = "accidents_heatmap.html"
 gmap.draw(hm_output)
 
 
-# In[108]:
+# In[162]:
 
 
 #Display Map
@@ -221,21 +233,15 @@ IFrame(src=hm_output,width=700, height=600)
 
 # ## Accident Descriptions
 
-# In[140]:
+# In[163]:
 
 
 df[df['description'].map(lambda x: 'bicikl' in x )]
 
 
-# In[141]:
+# In[164]:
 
 
 plt.figure(figsize=(pw, 2*pw))
 df['description'].value_counts()[::-1].plot(kind='barh');
-
-
-# In[ ]:
-
-
-
 
