@@ -91,7 +91,7 @@ df['long'] = df['long'].astype('float')
 df['lat'] = df['lat'].astype('float')
 
 
-# In[160]:
+# In[219]:
 
 
 #To date-time
@@ -107,6 +107,13 @@ df = df[df['date'].between(start_date, end_date)]
 
 #Month
 df['month']  = df['date'].dt.month_name()
+
+#Day
+df['day']  = df['date'].dt.day
+
+#Cal Date
+df['cal_date'] = df['month'] + "_" + df['day'].astype(str)
+
 
 #Weekday
 df['day_of_week'] = df['date'].dt.weekday_name
@@ -317,10 +324,16 @@ ax = sns.countplot(df['hour'], color=aquam);
 ax.set_title('Time Of Day');
 
 
-# In[203]:
+# In[231]:
 
 
-#critical dates?
+#Critical Dates
+ax = df['cal_date'].value_counts()[:20].plot(kind='bar', color=peach);
+
+ax.set_title("Top 20 Calendar Dates with Highest Number of Accidents ")
+ax.set_ylabel('Num. of Accidents');
+
+plt.xticks(rotation=45);
 
 
 # ## GeoLoc 
