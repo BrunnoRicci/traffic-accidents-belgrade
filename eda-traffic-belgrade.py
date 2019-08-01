@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[154]:
+# In[14]:
 
 
 # %load ../../misc/utils/import.py
@@ -33,7 +33,7 @@ pd.options.display.max_colwidth = 200
 # warnings.filterwarnings('ignore')
 
 
-# In[155]:
+# In[15]:
 
 
 #colors
@@ -44,7 +44,7 @@ coral = '#eb4c34'
 yellow = '#eef07d'
 
 
-# In[156]:
+# In[16]:
 
 
 #Contstants
@@ -54,7 +54,7 @@ output_dir = 'outputs/'
 
 # ## Exploratory Data Anlysis of Traffic Accidents in Belgrade 
 
-# In[157]:
+# In[17]:
 
 
 #Read df
@@ -68,7 +68,7 @@ for fn in file_names[1:]:
 print("Number of accidents {}".format(len(df)))
 
 
-# In[158]:
+# In[18]:
 
 
 #Sample
@@ -76,7 +76,7 @@ print("Sample")
 df.sample(5, random_state=23)
 
 
-# In[159]:
+# In[19]:
 
 
 #Add dummy
@@ -91,7 +91,7 @@ df['long'] = df['long'].astype('float')
 df['lat'] = df['lat'].astype('float')
 
 
-# In[219]:
+# In[20]:
 
 
 #To date-time
@@ -124,7 +124,7 @@ df['hour']  = df['date'].dt.hour
 print("Data from {} to {}".format(df['date'].min().date(), df['date'].max().date()))
 
 
-# In[161]:
+# In[21]:
 
 
 #Check Duplicates
@@ -134,7 +134,7 @@ print('Check duplicates')
 df.set_index('id').sort_index().loc[dupl_ids].head(4)
 
 
-# In[162]:
+# In[22]:
 
 
 #Drop Duplictates
@@ -143,7 +143,7 @@ df = df.drop_duplicates(subset=['id'])
 print("After duplicates removal {}".format(len(df)))
 
 
-# In[163]:
+# In[23]:
 
 
 #Filter incorrect AC types
@@ -159,7 +159,7 @@ df = df[(df['long'].between(-180,22)) & (df['lat'].between(-90,90))] #22 - 180 f
 print("Number of accidents after innitial filtering {}".format(len(df)))
 
 
-# In[164]:
+# In[24]:
 
 
 #Output for trans
@@ -171,7 +171,7 @@ output_csv_for_trnas(df, output_dir, 'acc_outcome')
 output_csv_for_trnas(df, output_dir, 'description')
 
 
-# In[165]:
+# In[25]:
 
 
 #Translate
@@ -189,7 +189,7 @@ for tt in tts:
 
 # ## Accidents Outcomes
 
-# In[166]:
+# In[26]:
 
 
 #Plot
@@ -201,7 +201,7 @@ ax.set_title('Accident Outcomes Distribution')
 plt.xticks(rotation=45);
 
 
-# In[169]:
+# In[27]:
 
 
 df['acc_outcome'].value_counts()
@@ -209,7 +209,7 @@ df['acc_outcome'].value_counts()
 
 # ## Accident Types
 
-# In[170]:
+# In[28]:
 
 
 #Plot
@@ -223,7 +223,7 @@ plt.xticks(rotation=45);
 plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 
-# In[171]:
+# In[29]:
 
 
 #Plot
@@ -238,7 +238,7 @@ plt.xticks(rotation=45);
 plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 
-# In[172]:
+# In[30]:
 
 
 #Plot
@@ -258,7 +258,7 @@ plt.gca().axvline(df['acc_type'].nunique() - 1, color = coral);
 
 # ## Accident Descriptions
 
-# In[173]:
+# In[31]:
 
 
 plt.figure(figsize=(pw, 2*pw))
@@ -267,7 +267,7 @@ df['description'].value_counts()[::-1].plot(kind='barh', color=blue);
 
 # ##  Time Series - Trend and Seasonality Observations
 
-# In[174]:
+# In[32]:
 
 
 #Seasonal df
@@ -281,7 +281,7 @@ ts_df['trend'] = ts_df[['count']].rolling(12).mean()
 ts_df['residual'] = ts_df['count'] - ts_df['trend']
 
 
-# In[175]:
+# In[33]:
 
 
 #Plot
@@ -296,7 +296,7 @@ ax.set_title('Number of Accidents');
 # - 2019 data looks **odd**
 # - There is still **seasonality left in residual** (monthly seson.)
 
-# In[200]:
+# In[34]:
 
 
 #Month
@@ -305,7 +305,7 @@ ax = sns.countplot(df['month'], color=aquam);
 ax.set_title('Month');
 
 
-# In[201]:
+# In[35]:
 
 
 #Month
@@ -315,7 +315,7 @@ ax = sns.countplot(df['day_of_week'], order=order, color=aquam);
 ax.set_title('Week Day');
 
 
-# In[202]:
+# In[36]:
 
 
 #Month
@@ -324,7 +324,7 @@ ax = sns.countplot(df['hour'], color=aquam);
 ax.set_title('Time Of Day');
 
 
-# In[231]:
+# In[37]:
 
 
 #Critical Dates
@@ -338,14 +338,14 @@ plt.xticks(rotation=45);
 
 # ## GeoLoc 
 
-# In[204]:
+# In[38]:
 
 
 #Constant
 belgrade_loc = {'lat':'44.7866', 'long':'20.4489'}
 
 
-# In[205]:
+# In[39]:
 
 
 plt.figure(figsize=(ph, ph))
@@ -354,7 +354,7 @@ plt.scatter(df['long'], df['lat'], s=[5] * len(df), color=blue);
 plt.title("All Accident Types");
 
 
-# In[206]:
+# In[40]:
 
 
 sns.relplot(x="long", y="lat", hue="acc_outcome", alpha=.8, palette="autumn_r", height=ph, data=df);
@@ -362,7 +362,7 @@ sns.relplot(x="long", y="lat", hue="acc_outcome", alpha=.8, palette="autumn_r", 
 plt.title("Accident Outcomes");
 
 
-# In[207]:
+# In[41]:
 
 
 sns.relplot(x="long", y="lat", hue="acc_type", alpha=.5, palette="cool", height=ph, data=df);
@@ -370,7 +370,7 @@ sns.relplot(x="long", y="lat", hue="acc_type", alpha=.5, palette="cool", height=
 plt.title("Accident Types");
 
 
-# In[208]:
+# In[42]:
 
 
 from gmplot import gmplot
@@ -379,7 +379,7 @@ from IPython.core.display import display, HTML
 from IPython.display import IFrame
 
 
-# In[209]:
+# In[43]:
 
 
 #Create Heatmap
@@ -388,6 +388,18 @@ gmap = gmplot.GoogleMapPlotter(belgrade_loc['lat'],belgrade_loc['long'], zoom=10
 heatmap = gmap.heatmap(df['lat'], df['long'], radius=20)
 
 hm_output = output_dir + "accidents_heatmap.html"
+gmap.draw(hm_output)
+
+
+# In[45]:
+
+
+#Create Scatter
+gmap = gmplot.GoogleMapPlotter(belgrade_loc['lat'],belgrade_loc['long'], zoom=10);
+
+heatmap = gmap.scatter(df['lat'], df['long'], peach,  size=10, marker=False)
+
+hm_output = output_dir + "accidents_scatter.html"
 gmap.draw(hm_output)
 
 
